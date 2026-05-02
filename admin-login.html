@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Play Store</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #121212;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .admin-login-card {
+            background: #1e1e1e;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid #333;
+        }
+        .admin-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: block;
+            text-align: center;
+        }
+        .form-group label {
+            color: #999;
+        }
+        .form-group input {
+            background: #2a2a2a;
+            border-color: #444;
+            color: #fff;
+        }
+        .form-group input:focus {
+            background: #333;
+            border-color: var(--primary-color);
+        }
+        .error-msg {
+            background: rgba(217, 48, 37, 0.2);
+            color: #ff8a80;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            border: 1px solid #d93025;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-login-card">
+        <i class="fa fa-shield-halved admin-icon"></i>
+        <h2 style="text-align: center; margin-bottom: 8px;">Admin Console</h2>
+        <p style="text-align: center; color: #777; margin-bottom: 32px;">Secure Administrative Access</p>
+        
+        <div id="errorMsg" class="error-msg"></div>
+
+        <form id="adminLoginForm">
+            <div class="form-group">
+                <label>Administrator Email</label>
+                <input type="email" id="email" required placeholder="admin@playstore.com">
+            </div>
+            <div class="form-group">
+                <label>Secure Password</label>
+                <input type="password" id="password" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px; border-radius: 8px;">
+                Authenticate
+            </button>
+        </form>
+
+        <p style="margin-top: 24px; text-align: center; font-size: 14px; color: #555;">
+            Authorized Personnel Only
+        </p>
+        <a href="index.html" style="display: block; text-align: center; margin-top: 16px; font-size: 14px; color: var(--primary-color)">
+            <i class="fa fa-arrow-left"></i> Back to Public Store
+        </a>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './js/firebase-config.js';
+        import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const loginForm = document.getElementById('adminLoginForm');
+        const errorMsg = document.getElementById('errorMsg');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const uid = userCredential.user.uid;
+
+                // Verify Admin Role
+                const userRef = ref(db, `users/${uid}`);
+                const snapshot = await get(userRef);
+                
+                if (snapshot.exists() && snapshot.val().role === 'admin') {
+                    window.location.href = 'admin.html';
+                } else {
+                    await auth.signOut();
+                    showError("Access Denied: Account does not have administrator privileges.");
+                }
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+
+        function showError(msg) {
+            errorMsg.textContent = msg;
+            errorMsg.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
