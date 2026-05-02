@@ -1,22 +1,21 @@
 {
   "rules": {
-    ".read": "auth.uid === 'AKlMefBDCfWF1PP3V5R8KZHLVKj2'",
-    ".write": "auth.uid === 'AKlMefBDCfWF1PP3V5R8KZHLVKj2'",
     "users": {
-      ".read": "auth != null",
+      ".read": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.uid === 'AKlMefBDCfWF1PP3V5R8KZHLVKj2')",
       "$uid": {
-        ".write": "auth.uid === 'AKlMefBDCfWF1PP3V5R8KZHLVKj2' || auth.uid === $uid"
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && (auth.uid === $uid || auth.uid === 'AKlMefBDCfWF1PP3V5R8KZHLVKj2' || root.child('users').child(auth.uid).child('role').val() === 'admin')"
       }
     },
     "apps": {
       ".read": "true",
       "$appId": {
         ".write": "auth != null && (
-          (auth.uid === 'AKlMefBDCfWF1PP3V5R8KZHLVKj2') || 
+          auth.uid === 'AKlMefBDCfWF1PP3V5R8KZHLVKj2' || 
+          root.child('users').child(auth.uid).child('role').val() === 'admin' || 
           (auth.uid === 'M02DIq3ymXWmIpBlfMTmBFAoSjb2' && (!data.exists() || data.child('publisherId').val() === auth.uid)) ||
-          (root.child('users').child(auth.uid).child('role').val() === 'admin') ||
           (root.child('users').child(auth.uid).child('role').val() === 'publisher' && 
-           (!data.exists() || data.child('publisherId').val() === auth.uid) &&
+           (!data.exists() || data.child('publisherId').val() === auth.uid) && 
            (newData.child('status').val() === (data.exists() ? data.child('status').val() : 'pending')))
         )"
       }
