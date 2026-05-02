@@ -1,0 +1,22 @@
+{
+  "rules": {
+    "users": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "auth.uid === 'AKlMefBDCfWF1PP3V5R8KZHLVKj2' || auth.uid === $uid"
+      }
+    },
+    "apps": {
+      ".read": "true",
+      "$appId": {
+        ".write": "auth != null && (
+          (auth.uid === 'AKlMefBDCfWF1PP3V5R8KZHLVKj2') || 
+          (root.child('users').child(auth.uid).child('role').val() === 'admin') ||
+          (root.child('users').child(auth.uid).child('role').val() === 'publisher' && 
+           (!data.exists() || data.child('publisherId').val() === auth.uid) &&
+           (newData.child('status').val() === (data.exists() ? data.child('status').val() : 'pending')))
+        )"
+      }
+    }
+  }
+}
