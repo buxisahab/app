@@ -9,104 +9,170 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <div class="container nav-content">
-            <div class="logo">
-                <img src="https://www.gstatic.com/android/market_images/web/play_prism_h_64.png" alt="Google Play">
-                <span>Admin Control</span>
-            </div>
-            <div class="user-profile" style="display: flex; gap: 15px; align-items: center;">
-                <span id="adminEmail" style="font-weight: 500;"></span>
-                <button onclick="logout()" class="btn btn-outline" style="padding: 6px 16px;">Logout</button>
-            </div>
+    <div id="loginSection" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #f0f2f5;">
+        <div class="login-card" style="background: white; padding: 40px; border-radius: 12px; box-shadow: var(--shadow); width: 100%; max-width: 400px; text-align: center;">
+            <img src="https://www.gstatic.com/android/market_images/web/play_prism_h_64.png" alt="Play Store" style="width: 48px; margin-bottom: 20px;">
+            <h2 style="margin-bottom: 8px;">Admin Login</h2>
+            <p style="color: var(--text-muted); margin-bottom: 32px;">Secure access to console</p>
+            <div id="errorMsg" style="color: #d93025; background: #fce8e6; padding: 10px; border-radius: 4px; font-size: 14px; margin-bottom: 20px; display: none;"></div>
+            <form id="adminLoginForm">
+                <div class="form-group" style="text-align: left;">
+                    <label>Email</label>
+                    <input type="email" id="email" required placeholder="admin@example.com">
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label>Password</label>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Authenticate</button>
+            </form>
+            <a href="index.html" style="display: block; margin-top: 24px; font-size: 14px; color: var(--primary-color)">Back to Store</a>
         </div>
-    </header>
+    </div>
 
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <a href="#" class="sidebar-link active" onclick="showTab('apps')"><i class="fa fa-mobile-alt"></i> Manage Apps</a>
-            <a href="#" class="sidebar-link" onclick="showTab('publishers')"><i class="fa fa-users"></i> Manage Publishers</a>
-            <a href="#" class="sidebar-link" onclick="showTab('settings')"><i class="fa fa-cog"></i> Site Settings</a>
-        </aside>
+    <div id="adminContent" style="display: none;">
+        <header>
+            <div class="container nav-content">
+                <div class="logo">
+                    <img src="https://www.gstatic.com/android/market_images/web/play_prism_h_64.png" alt="Google Play">
+                    <span>Admin Control</span>
+                </div>
+                <div class="user-profile" style="display: flex; gap: 15px; align-items: center;">
+                    <span id="adminEmail" style="font-weight: 500;"></span>
+                    <button onclick="logout()" class="btn btn-outline" style="padding: 6px 16px;">Logout</button>
+                </div>
+            </div>
+        </header>
 
-        <main class="main-content">
-            <!-- Apps Management Tab -->
-            <div id="appsTab" class="tab-content">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
-                    <h1>App Approvals</h1>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-outline active" onclick="filterApps('all')">All</button>
-                        <button class="btn btn-outline" onclick="filterApps('pending')">Pending</button>
+        <div class="dashboard-container">
+            <aside class="sidebar">
+                <a href="#" class="sidebar-link active" onclick="showTab('apps')"><i class="fa fa-mobile-alt"></i> Manage Apps</a>
+                <a href="#" class="sidebar-link" onclick="showTab('publishers')"><i class="fa fa-users"></i> Manage Publishers</a>
+                <a href="#" class="sidebar-link" onclick="showTab('settings')"><i class="fa fa-cog"></i> Site Settings</a>
+            </aside>
+
+            <main class="main-content">
+                <!-- Apps Management Tab -->
+                <div id="appsTab" class="tab-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+                        <h1>App Approvals</h1>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-outline active" onclick="filterApps('all')">All</button>
+                            <button class="btn btn-outline" onclick="filterApps('pending')">Pending</button>
+                        </div>
+                    </div>
+
+                    <div class="table-container" style="background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead style="background: var(--bg-color); border-bottom: 1px solid var(--border-color);">
+                                <tr>
+                                    <th style="padding: 16px; text-align: left;">App</th>
+                                    <th style="padding: 16px; text-align: left;">Publisher</th>
+                                    <th style="padding: 16px; text-align: left;">Status</th>
+                                    <th style="padding: 16px; text-align: left;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminAppList">
+                                <!-- Loaded via JS -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
-                <div class="table-container" style="background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden;">
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead style="background: var(--bg-color); border-bottom: 1px solid var(--border-color);">
-                            <tr>
-                                <th style="padding: 16px; text-align: left;">App</th>
-                                <th style="padding: 16px; text-align: left;">Publisher</th>
-                                <th style="padding: 16px; text-align: left;">Status</th>
-                                <th style="padding: 16px; text-align: left;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminAppList">
-                            <!-- Loaded via JS -->
-                        </tbody>
-                    </table>
+                <!-- Publishers Management Tab -->
+                <div id="publishersTab" class="tab-content" style="display: none;">
+                    <div style="justify-content: space-between; align-items: center; margin-bottom: 32px; display: flex;">
+                        <h1>Publishers</h1>
+                        <button class="btn btn-primary" onclick="showAddPublisherModal()">+ Create Publisher</button>
+                    </div>
+                    <div class="table-container" style="background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead style="background: var(--bg-color); border-bottom: 1px solid var(--border-color);">
+                                <tr>
+                                    <th style="padding: 16px; text-align: left;">Email</th>
+                                    <th style="padding: 16px; text-align: left;">Role</th>
+                                    <th style="padding: 16px; text-align: left;">Status</th>
+                                    <th style="padding: 16px; text-align: left;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="publisherList">
+                                <!-- Loaded via JS -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            </main>
+        </div>
 
-            <!-- Publishers Management Tab -->
-            <div id="publishersTab" class="tab-content" style="display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
-                    <h1>Publishers</h1>
-                    <button class="btn btn-primary" onclick="showAddPublisherModal()">+ Create Publisher</button>
-                </div>
-                <div class="table-container" style="background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden;">
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead style="background: var(--bg-color); border-bottom: 1px solid var(--border-color);">
-                            <tr>
-                                <th style="padding: 16px; text-align: left;">Email</th>
-                                <th style="padding: 16px; text-align: left;">Role</th>
-                                <th style="padding: 16px; text-align: left;">Status</th>
-                                <th style="padding: 16px; text-align: left;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="publisherList">
-                            <!-- Loaded via JS -->
-                        </tbody>
-                    </table>
-                </div>
+        <!-- Create Publisher Modal -->
+        <div id="pubModal" class="modal-overlay">
+            <div class="modal">
+                <h2>Create New Publisher</h2>
+                <p style="color: var(--text-muted); margin-bottom: 24px;">This will create a new account in the database. Password will be '123456' by default.</p>
+                <form id="pubForm">
+                    <div class="form-group">
+                        <label>Publisher Email</label>
+                        <input type="email" id="pubEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="pubName" required>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button type="button" class="btn btn-outline" onclick="hidePubModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Account</button>
+                    </div>
+                </form>
             </div>
-        </main>
-    </div>
-
-    <!-- Create Publisher Modal -->
-    <div id="pubModal" class="modal-overlay">
-        <div class="modal">
-            <h2>Create New Publisher</h2>
-            <p style="color: var(--text-muted); margin-bottom: 24px;">This will create a new account in the database. Password will be '123456' by default.</p>
-            <form id="pubForm">
-                <div class="form-group">
-                    <label>Publisher Email</label>
-                    <input type="email" id="pubEmail" required>
-                </div>
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="pubName" required>
-                </div>
-                <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                    <button type="button" class="btn btn-outline" onclick="hidePubModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Create Account</button>
-                </div>
-            </form>
         </div>
     </div>
 
     <script type="module">
-        import { protectPage } from './js/auth.js';
-        protectPage('admin');
+        import { auth, db } from './js/firebase-config.js';
+        import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const loginSection = document.getElementById('loginSection');
+        const adminContent = document.getElementById('adminContent');
+        const loginForm = document.getElementById('adminLoginForm');
+        const errorMsg = document.getElementById('errorMsg');
+
+        // Check Auth State
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const snapshot = await get(ref(db, `users/${user.uid}`));
+                if (snapshot.exists() && snapshot.val().role === 'admin') {
+                    loginSection.style.display = 'none';
+                    adminContent.style.display = 'block';
+                    document.getElementById('adminEmail').textContent = user.email;
+                } else {
+                    await signOut(auth);
+                    showError("Unauthorized: Not an admin account.");
+                }
+            } else {
+                loginSection.style.display = 'flex';
+                adminContent.style.display = 'none';
+            }
+        });
+
+        // Handle Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+
+        function showError(msg) {
+            errorMsg.textContent = msg;
+            errorMsg.style.display = 'block';
+        }
+
+        window.logout = () => signOut(auth);
     </script>
     <script type="module" src="js/admin.js"></script>
 </body>
