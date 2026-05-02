@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publisher Console - Play Store</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container nav-content">
+            <div class="logo">
+                <img src="https://www.gstatic.com/android/market_images/web/play_prism_h_64.png" alt="Google Play">
+                <span>Publisher Console</span>
+            </div>
+            <div class="user-profile" style="display: flex; gap: 15px; align-items: center;">
+                <span id="userName" style="font-weight: 500;"></span>
+                <button onclick="logout()" class="btn btn-outline" style="padding: 6px 16px;">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <a href="#" class="sidebar-link active"><i class="fa fa-th-large"></i> Dashboard</a>
+            <a href="#" class="sidebar-link" id="uploadTrigger"><i class="fa fa-plus-circle"></i> Upload New App</a>
+            <a href="#" class="sidebar-link"><i class="fa fa-chart-line"></i> Analytics</a>
+            <a href="index.html" class="sidebar-link"><i class="fa fa-external-link"></i> View Store</a>
+        </aside>
+
+        <main class="main-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+                <h1>My Apps</h1>
+                <button class="btn btn-primary" onclick="showUploadModal()">+ Upload App</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalApps">0</div>
+                    <div class="stat-label">Total Submissions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="approvedApps">0</div>
+                    <div class="stat-label">Live Apps</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="pendingApps">0</div>
+                    <div class="stat-label">Pending Review</div>
+                </div>
+            </div>
+
+            <div class="table-container" style="background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead style="background: var(--bg-color); border-bottom: 1px solid var(--border-color);">
+                        <tr>
+                            <th style="padding: 16px;">App Details</th>
+                            <th style="padding: 16px;">Category</th>
+                            <th style="padding: 16px;">Status</th>
+                            <th style="padding: 16px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="myAppsList">
+                        <!-- Publisher apps will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="modal-overlay">
+        <div class="modal">
+            <h2 style="margin-bottom: 24px;">Submit New App</h2>
+            <form id="uploadForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label>App Name</label>
+                        <input type="text" id="appName" required placeholder="e.g. My Great App">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="appCategory">
+                            <option value="Games">Games</option>
+                            <option value="Apps">Apps</option>
+                            <option value="Productivity">Productivity</option>
+                            <option value="Social">Social</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Package Name</label>
+                    <input type="text" id="appPackage" required placeholder="com.company.app">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="appDesc" rows="4" required placeholder="What does your app do?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Logo URL</label>
+                    <input type="url" id="appLogo" required placeholder="https://example.com/logo.png">
+                </div>
+                <div class="form-group">
+                    <label>APK / Download URL</label>
+                    <input type="url" id="appUrl" required placeholder="Link to your APK file">
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" class="btn btn-outline" onclick="hideUploadModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit for Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { protectPage } from './js/auth.js';
+        protectPage('publisher');
+    </script>
+    <script type="module" src="js/publisher.js"></script>
+</body>
+</html>

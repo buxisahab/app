@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Play Store</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container nav-content">
+            <div class="logo">
+                <img src="https://www.gstatic.com/android/market_images/web/play_prism_h_64.png" alt="Google Play">
+                <span>Admin Control</span>
+            </div>
+            <div class="user-profile" style="display: flex; gap: 15px; align-items: center;">
+                <span id="adminEmail" style="font-weight: 500;"></span>
+                <button onclick="logout()" class="btn btn-outline" style="padding: 6px 16px;">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <a href="#" class="sidebar-link active" onclick="showTab('apps')"><i class="fa fa-mobile-alt"></i> Manage Apps</a>
+            <a href="#" class="sidebar-link" onclick="showTab('publishers')"><i class="fa fa-users"></i> Manage Publishers</a>
+            <a href="#" class="sidebar-link" onclick="showTab('settings')"><i class="fa fa-cog"></i> Site Settings</a>
+        </aside>
+
+        <main class="main-content">
+            <!-- Apps Management Tab -->
+            <div id="appsTab" class="tab-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+                    <h1>App Approvals</h1>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-outline active" onclick="filterApps('all')">All</button>
+                        <button class="btn btn-outline" onclick="filterApps('pending')">Pending</button>
+                    </div>
+                </div>
+
+                <div class="table-container" style="background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead style="background: var(--bg-color); border-bottom: 1px solid var(--border-color);">
+                            <tr>
+                                <th style="padding: 16px; text-align: left;">App</th>
+                                <th style="padding: 16px; text-align: left;">Publisher</th>
+                                <th style="padding: 16px; text-align: left;">Status</th>
+                                <th style="padding: 16px; text-align: left;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminAppList">
+                            <!-- Loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Publishers Management Tab -->
+            <div id="publishersTab" class="tab-content" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+                    <h1>Publishers</h1>
+                    <button class="btn btn-primary" onclick="showAddPublisherModal()">+ Create Publisher</button>
+                </div>
+                <div class="table-container" style="background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead style="background: var(--bg-color); border-bottom: 1px solid var(--border-color);">
+                            <tr>
+                                <th style="padding: 16px; text-align: left;">Email</th>
+                                <th style="padding: 16px; text-align: left;">Role</th>
+                                <th style="padding: 16px; text-align: left;">Status</th>
+                                <th style="padding: 16px; text-align: left;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="publisherList">
+                            <!-- Loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Publisher Modal -->
+    <div id="pubModal" class="modal-overlay">
+        <div class="modal">
+            <h2>Create New Publisher</h2>
+            <p style="color: var(--text-muted); margin-bottom: 24px;">This will create a new account in the database. Password will be '123456' by default.</p>
+            <form id="pubForm">
+                <div class="form-group">
+                    <label>Publisher Email</label>
+                    <input type="email" id="pubEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="pubName" required>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-outline" onclick="hidePubModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { protectPage } from './js/auth.js';
+        protectPage('admin');
+    </script>
+    <script type="module" src="js/admin.js"></script>
+</body>
+</html>
