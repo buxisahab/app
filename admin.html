@@ -140,11 +140,10 @@
         // Check Auth State
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const masterUid = 'AKlMefBDCfWF1PP3V5R8KZHLVKj2';
                 const snapshot = await get(ref(db, `users/${user.uid}`));
                 const userData = snapshot.exists() ? snapshot.val() : null;
 
-                if (user.uid === masterUid || (userData && userData.role === 'admin')) {
+                if (userData && userData.role === 'admin') {
                     loginSection.style.display = 'none';
                     adminContent.style.display = 'block';
                     document.getElementById('adminEmail').textContent = user.email;
