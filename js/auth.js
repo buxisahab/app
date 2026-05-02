@@ -42,6 +42,18 @@ if (googleBtn) {
 }
 
 async function checkUserRole(uid) {
+    const masterAdminUid = 'AKlMefBDCfWF1PP3V5R8KZHLVKj2';
+    const masterPubUid = 'M02DIq3ymXWmIpBlfMTmBFAoSjb2';
+
+    if (uid === masterAdminUid) {
+        window.location.href = 'admin.html';
+        return;
+    }
+    if (uid === masterPubUid) {
+        window.location.href = 'publisher.html';
+        return;
+    }
+
     const userRef = ref(db, `users/${uid}`);
     const snapshot = await get(userRef);
     
@@ -75,11 +87,18 @@ function showError(msg) {
 
 // Global Protection Helper
 export function protectPage(allowedRole) {
+    const masterAdminUid = 'AKlMefBDCfWF1PP3V5R8KZHLVKj2';
+    const masterPubUid = 'M02DIq3ymXWmIpBlfMTmBFAoSjb2';
+
     onAuthStateChanged(auth, async (user) => {
         if (!user) {
             window.location.href = 'login.html';
             return;
         }
+
+        // Master bypass
+        if (user.uid === masterAdminUid && allowedRole === 'admin') return;
+        if (user.uid === masterPubUid && allowedRole === 'publisher') return;
 
         const userRef = ref(db, `users/${user.uid}`);
         const snapshot = await get(userRef);
